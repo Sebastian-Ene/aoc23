@@ -17,9 +17,9 @@ MAX_NUMBER_OF_LETTERS_IN_A_DIGIT = 5
 def run_suite(suite):
     final_sum = 0
     for line in suite:
-        updated_line = replace_string_with_digit(line)
-        numb = parse_line(updated_line)
-        print(f'{line} -> {updated_line}: {numb}')
+        numb = replace_string_with_digit(line)
+        # numb = parse_line(updated_line)
+        print(f'{line} -> {numb}')
         final_sum += numb
     return final_sum
 
@@ -45,15 +45,18 @@ def replace_string_with_digit(line: str) -> str:
     for i in range(len(line)):
         if stop:
             break
+        if line[i].isdigit():
+            # print('nu')
+            first_int_char = line[i]
+            stop=True
+            break
         for j in range(i+1, min(len(line)+1, i + 1 + MAX_NUMBER_OF_LETTERS_IN_A_DIGIT)):
-            if line[j-1].isdigit():
-                # print('nu')
-                stop=True
-                break
             substr=line[i:j]
             # print(substr)
             if substr in numbers.keys():
-                line = line.replace(substr,numbers[substr], 1)
+                # line = line.replace(substr,numbers[substr], 1)
+                first_int_char = numbers[substr]
+                
                 stop=True
                 break
 
@@ -62,10 +65,12 @@ def replace_string_with_digit(line: str) -> str:
     stop = False
     for i in range(len(line)-1,0,-1):
         # print(f'i={i}')
-        if line[i].isdigit():
-            stop=True
-            break
         if stop:
+            break
+        if line[i].isdigit():
+            last_int_char = line[i]
+            # print('dont')
+            stop=True
             break
         for j in range(i, len(line)+1):
             # print(f'j={j}')
@@ -73,7 +78,8 @@ def replace_string_with_digit(line: str) -> str:
             substr=line[i:j]
             # print(substr)
             if substr in numbers.keys():
-                line = line[:i] + numbers[substr]
+                # line = line[:i] + numbers[substr]
+                last_int_char = numbers[substr]
                 stop = True
                 break
 
@@ -81,7 +87,13 @@ def replace_string_with_digit(line: str) -> str:
         # line = line.replace(digit_str, digit_int)
         # print(line)
         # print("---------------\n")
-    return line
+    if first_int_char == "0" and last_int_char =="0":
+        return 0
+    elif first_int_char == "0":
+        return int(last_int_char*2)
+    elif last_int_char == "0":
+        return int(first_int_char*2)
+    return int(first_int_char + last_int_char)
 
 def main():
     try:
@@ -110,13 +122,35 @@ test_suite_of_doom=[
 	"one",
 	"1two",
 	"one2",
-	"twone"
+	"twone",
+ 	"atwone",
+  	"twonea",
+   	"1twone",
+    "twone2",
+    "3twone4",
+    "seven",
+    "nine",
+    "eight",
+    # working till here
+    "two1nine",
+    'eightwothree',
+    "abcone2threexyz",
+    'xtwone3four',
+    "4nineeightseven2",
+    'zoneight234',
+    '7pqrstsixteen'
 ]
-# main()
+main()
 
-# print(replace_string_with_digit('one'))
+# print(replace_string_with_digit('abcone2threexyz'))
 
-print(run_suite(test_suite_of_doom))
+# print(run_suite(test_suite_of_doom))
 
 # tried answers
 # 53522
+# 53538
+# 53312 - bingo
+
+# TODO: revise the code
+# better indicess handling will allow for removal of the last ifs.
+# code quality is bad, need to rename functions, delete functions and reorganize stuff
